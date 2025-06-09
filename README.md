@@ -17,16 +17,18 @@ A principal ideia da Clean Architecture é separar o código em camadas concênt
 🔄 As dependências sempre apontam para dentro:
 
 ```
+
 +------------------------+
-|      External Layer    | <- Interface com o usuário, web, banco, etc.
+| External Layer | <- Interface com o usuário, web, banco, etc.
 +------------------------+
-|    Interface Adapters  | <- Controllers, Gateways, Presenters
+| Interface Adapters | <- Controllers, Gateways, Presenters
 +------------------------+
-|     Use Cases Layer    | <- Regras de negócio da aplicação
+| Use Cases Layer | <- Regras de negócio da aplicação
 +------------------------+
-|   Entities (Core)      | <- Regras de negócio mais genéricas
+| Entities (Core) | <- Regras de negócio mais genéricas
 +------------------------+
 ```
+
 
 🧱 As camadas:
 - Frameworks & Drivers (camada externa):
@@ -159,13 +161,13 @@ Este módulo define a infraestrutura backend do Test.AI utilizando o FastAPI com
 
 ```
 crew = Crew(
-    agents=agents + [manager],
-    tasks=tasks + [final_task],
-    max_rpm=10,
-    output_log_file="crew_log.txt",
-    manager_llm=llm_low_temp,
-    process=Process.sequential,
-    verbose=True
+agents=agents + [manager],
+tasks=tasks + [final_task],
+max_rpm=10,
+output_log_file="crew_log.txt",
+manager_llm=llm_low_temp,
+process=Process.sequential,
+verbose=True
 )
 ```
 - Este trecho define a Crew com múltiplos agentes (writers, reviewers e manager) e suas respectivas tarefas. O processo é executado de forma sequencial, e os logs são salvos em crew_log.txt. A CrewAI orquestra toda a execução das tarefas com uso de LLMs configurados dinamicamente.
@@ -179,7 +181,7 @@ load_dotenv()
 ```
 @app.get("/")
 async def home():
-    return "Rodando"
+return "Rodando"
 ```
 
 - Este endpoint básico verifica se a aplicação está no ar.
@@ -187,12 +189,13 @@ async def home():
 ```
 @app.post("/gherkin")
 async def generate_gherkin_file(evento: Evento):
-    feature = generate_gherkin_feature(evento.evento)
-    body = {
-        "feature": feature
-    }
-    return JSONResponse(body)
+feature = generate_gherkin_feature(evento.evento)
+body = {
+"feature": feature
+}
+return JSONResponse(body)
 ```
+
 
 - O endpoint /gherkin é o principal ponto de entrada para a geração de arquivos de teste. Ele recebe um JSON com um campo evento, que será transformado em uma feature Gherkin através da função generate_gherkin_feature.
 

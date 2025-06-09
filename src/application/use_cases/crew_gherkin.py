@@ -1,16 +1,31 @@
-from crewai import Agent, Task, Crew, Process, LLM
-#import os
-from dotenv import load_dotenv
 #import json
+#import os
+from crewai import Agent, Task, Crew, Process, LLM
+from dotenv import load_dotenv
+from crewai import Crew, Process
 from typing import Dict, List
-from module import init_task, init_agent, init_llm
+from src.infrastructure.loaders.agent_yaml_loader import AgentLoader
+from src.infrastructure.loaders.llm_loader import LLM_Loader
+from src.infrastructure.loaders.task_yaml_loader import TaskLoader
+import os
+from dotenv import load_dotenv
 
-load_dotenv()
+# DEBUG DA API:
+# import litellm
+# litellm._turn_on_debug()  # Ativa debug
+# response = litellm.completion(
+#     model=os.getenv("LLM_MODEL"),  # "gemini/gemini-1.5-flash"
+#     messages=[{"role": "user", "content": "Olá, mundo!"}],
+#     api_key=os.getenv("GEMINI_API_KEY")  # Chave corrigida
+# )
+# print(response)
+
+load_dotenv() 
 
 def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
     
-    llm_low_temp: LLM = init_llm()
-    llm_high_temp: LLM = init_llm(temp=0.6)
+    llm_low_temp = LLM_Loader.load_from_params()
+    llm_high_temp = LLM_Loader.load_from_params(temp=0.6)
 
     agents_dict: Dict[str, str] = strings["agents"]
     tasks_dict: Dict[str, str] = strings["tasks"]
@@ -20,20 +35,20 @@ def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
 
     for turn in range(1,4):
         agents_dict['gherkin_writer']['role'] = agents_dict['gherkin_writer']['role'].format(turn=turn)
-        gherkin_writer_agent: Agent = init_agent(agents_dict["gherkin_writer"], llm_high_temp)
+        gherkin_writer_agent: Agent = AgentLoader.load_agents(agents_dict["gherkin_writer"], llm_high_temp)
 
         agents_dict['gherkin_reviewer']['role'] = agents_dict['gherkin_reviewer']['role'].format(turn=turn)
-        gherkin_reviewer_agent: Agent = init_agent(agents_dict["gherkin_reviewer"], llm_low_temp)
+        gherkin_reviewer_agent: Agent = AgentLoader.load_agents(agents_dict["gherkin_reviewer"], llm_low_temp)
 
         tasks_dict["gherkin_code"]["description"] = tasks_dict["gherkin_code"]["description"].format(user_case=user_case)
-        task_gherkin_code: Task = init_task(
+        task_gherkin_code: Task = TaskLoader.load_tasks(
             tasks_dict["gherkin_code"],
             gherkin_writer_agent,
             #output_file=f"etapas_geracao/rodada_{turn}.cs"
         )
 
         tasks_dict["gherkin_review"]["description"] = tasks_dict["gherkin_review"]["description"].format(user_case=user_case)
-        task_gherkin_review: Task = init_task(
+        task_gherkin_review: Task = TaskLoader.load_tasks(
             tasks_dict["gherkin_review"],
             gherkin_reviewer_agent,
             context=[task_gherkin_code],
@@ -46,12 +61,12 @@ def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
         tasks.append(task_gherkin_code)
         tasks.append(task_gherkin_review)
 
-    manager: Agent = init_agent(agents_dict["manager_gherkin"], llm_low_temp)
-    final_task: Task = init_task(
+    manager: Agent = AgentLoader.load_agents(agents_dict["manager_gherkin"], llm_low_temp)
+    final_task: Task = TaskLoader.load_tasks(
         tasks_dict["manager_gherkin_task"],
-        output_file="features/ListarModalidadeFeature.feature",
         agent=manager,
         context=tasks[1::2],
+        output_file="features/ListarModalidadeFeature.feature",
     )
 
     crew: Crew = Crew(
