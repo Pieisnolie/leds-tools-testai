@@ -1,190 +1,207 @@
-## 🏛️ Arquitetura Adotada
-Estilo Arquitetural: Clean Architecture
+# 🏛️ Adopted Architecture
 
-Clean Architecture é uma estrutura de design de software com várias camadas, promovendo uma estrutura organizada e de fácil compreensão, o que é benéfico para o desenvolvimento.
+## Architectural Style: Clean Architecture
 
-Sua principal característica é a separação e independência das camadas, como o desacoplamento da lógica de negócios do sistema de influências externas como o sistema de interface do usuário (UI), frameworks, bancos de dados e assim por diante. Isso é alcançado definindo uma camada de domínio independente e isolada.
+Clean Architecture is a software design structure composed of multiple layers, promoting an organized and easy-to-understand structure, which is beneficial for development.
 
-🧠 Princípios Fundamentais da Clean Architecture:
-- Independência de tecnologia: O núcleo do sistema (regras de negócio) não conhece detalhes de frameworks, bibliotecas ou I/O.
+Its main feature is the separation and independence of layers, such as decoupling business logic from external influences like the user interface (UI), frameworks, databases, etc. This is achieved by defining an independent and isolated domain layer.
 
-- Ordem de dependência: O fluxo de dependência sempre aponta para o centro — interfaces externas dependem do domínio, e nunca o contrário.
+### 🧠 Core Principles of Clean Architecture:
 
-- Regras de negócio isoladas: Permite reaproveitamento em outros contextos (ex: CLI, APIs, interfaces gráficas).
+- **Technology independence**: The system core (business rules) does not depend on frameworks, libraries, or I/O details.
+- **Dependency rule**: The flow of dependencies always points inward — external interfaces depend on the domain, never the opposite.
+- **Isolated business rules**: Enables reuse in other contexts (e.g., CLI, APIs, graphical interfaces).
 
-A principal ideia da Clean Architecture é separar o código em camadas concêntricas, onde:
+The main idea of Clean Architecture is to separate code into concentric layers, where:
 
-🔄 As dependências sempre apontam para dentro:
+🔄 **Dependencies always point inward:**
+
 
 ```
 
 +------------------------+
-| External Layer | <- Interface com o usuário, web, banco, etc.
+| External Layer | <- User interface, web, database, etc.
 +------------------------+
 | Interface Adapters | <- Controllers, Gateways, Presenters
 +------------------------+
-| Use Cases Layer | <- Regras de negócio da aplicação
+| Use Cases Layer | <- Application business rules
 +------------------------+
-| Entities (Core) | <- Regras de negócio mais genéricas
+| Entities (Core) | <- Generic business rules
 +------------------------+
 ```
 
 
-🧱 As camadas:
-- Frameworks & Drivers (camada externa):
-Onde ficam os frameworks, banco de dados, UI, serviços externos, etc.
+---
 
-- Interface Adapters:
-Camada que adapta os dados para entrada/saída (ex: controllers, presenters, repositórios).
+## 📦 The Layers:
 
-- Use Cases:
-Casos de uso da aplicação, orquestram as regras para resolver problemas específicos do domínio.
+- **Frameworks & Drivers (outermost layer):**  
+  Where external tools and services reside, such as frameworks, databases, UI, and third-party services.
 
-- Entities:
-Contém as regras de negócio mais genéricas e independentes de tecnologia.
+- **Interface Adapters:**  
+  The layer that transforms data for input/output (e.g., controllers, presenters, repositories).
 
-## 🧩 Aplicação no contexto do Test.AI:
+- **Use Cases:**  
+  Application-specific business rules that orchestrate the logic to solve specific domain problems.
 
-| Camada | Descrição | Exemplos |
-|----------|----------|----------|
-| Interface  | Camada de interação com o usuário. Usa a API do VS Code para capturar ações como clique direito.  | Comandos como "Generate BDD", "Generate Steps"  |
-| Aplicação  | Camada que define os fluxos principais e regras de orquestração dos dados.  | Script que decide como gerar arquivos a partir dos dados fornecidos.  |
-| Domínio  | Contém as regras de negócio puras, como interpretação do .andes e geração dos testes.  | Classes e funções Python que fazem parsing e estruturam os dados.  |
-| Infraestrutura  | Responsável por interagir com o sistema operacional, arquivos, APIs externas, .env.  | Integração com Gemini, leitura de .env, gravação de arquivos.  |
-
-## 🖥️ Interface no Test.AI
-
-### 📌 Descrição
-A **camada de Interface** é responsável por interagir diretamente com o **usuário final**. No projeto Test.AI, essa interação é realizada por meio de uma aplicação em **Streamlit**, que serve como a camada de apresentação visual, exibindo os dados gerados pelas APIs e capturando comandos do usuário.
-
-Essa camada não processa lógica de negócio, mas atua como ponte entre o usuário e a aplicação.
+- **Entities:**  
+  The most generic and reusable business rules, independent of technology or application context.
 
 ---
 
-### 🔍 Trechos do Código Relacionados à Interface
+---
 
-**Arquivo:** `src/scripts/comparacao.py`
+## 🧩 Application in the Test.AI Context
 
-| Trecho de Código | Descrição | Função na Interface |
-|------------------|-----------|---------------------|
-| `import streamlit as st` | Importa a biblioteca de interface gráfica. | Inicializa a camada de interface web. |
-| `user_input = data_json['payload']` | Carrega a entrada do usuário a partir de um JSON. | Captura o dado a ser enviado para as APIs. |
-| `if st.button("Enviar"):` | Cria o botão de envio. | Dispara o processamento ao clicar. |
-| `col1, col2 = st.columns([1, 1])` | Cria duas colunas visuais na interface. | Divide as respostas do modelo "Debate" e "Sequencial". |
-| `st.session_state['messages'].append(...)` | Armazena as mensagens da sessão. | Controla o histórico da interação. |
-| `st.write(...)` | Exibe as respostas e entrada do usuário. | Mostra os dados na tela para o usuário. |
-| `if st.button("Limpar Conversa"):` | Cria botão de limpeza da sessão. | Reseta a interface e o histórico da conversa. |
+| Layer           | Description                                                          | Examples                                             |
+|------------------|----------------------------------------------------------------------|------------------------------------------------------|
+| Interface        | User interaction layer via VS Code API or Streamlit                 | Commands like "Generate BDD", "Generate Steps"       |
+| Application      | Defines the main flows and orchestration rules                      | Scripts that coordinate agents and tasks             |
+| Domain           | Pure business rules                                                  | Generation and review of `.feature` files with CrewAI |
+| Infrastructure   | Manages OS interaction, file system, environment, and LLMs          | FastAPI, reading `.env`, logs, calling LLMs          |
 
 ---
 
-### ✅ Resumo
+## 🖥️ Interface in Test.AI
 
-A camada de Interface no Test.AI atua como um **painel de controle visual** da aplicação. Ela é responsável por:
+### 📌 Description
 
-- **Receber dados de entrada do usuário**
-- **Enviar esses dados para APIs externas (Debate e Sequencial)**
-- **Exibir os resultados recebidos de forma clara e organizada**
-- **Manter o histórico da sessão de forma interativa**
-- **Resetar a interface sob demanda**
+The **Interface layer** is responsible for directly interacting with the **end user**. In the Test.AI project, this interaction is done through a **Streamlit application**, which serves as the visual presentation layer, displaying the data generated by APIs and capturing user commands.
 
-## 🖥️ Aplicação no Test.AI
-
-### 📌 Descrição
-A **camada de Aplicação** A camada de aplicação pode ser considerada o epicentro do projeto. Como o seu nome sugere, é nesse estado onde o aplicativo é desenvolvido, onde trazemos o funcionamento à lógica definida anteriormente na camada de domínio. 
-Nessa camada se encontra a materealização e a execução dos casos de uso, desta forma, definindo o comportamento do aplicativo.
+This layer does not process business logic but acts as a bridge between the user and the application.
 
 ---
 
-### ✅ Portanto..
+### 🔍 Code Snippets Related to the Interface
 
-A camada de Aplicação no Test.AI atua como um o **cerne** da aplicação. Ela é responsável por:
+**File:** `src/scripts/comparacao.py`
 
-- **Executar os casos de uso de geração de BDD**
-- **Controla a interação entre os agentes e os fluxos de ação**
-- **Isola a lógica de negócio da interface**
-- **Guarda a definição dos agentes**
-- **Guarda os arquivos referentes a definição das tarefas**
-
-## 🖥️ Domínio no Test.AI
-
-### 📌 Descrição
-
-A **camada de Domínio da Lógica** no **Test.AI** é responsável por conter as **regras de negócio** para o funcionamento de um sistema. Fundamental para garantir que todas as ações de interpretação de dados e geração de arquivos de testes sejam feitas de forma correta e eficiente.
-
-Essa camada é **independente de frameworks e tecnologias externas**, isolando a lógica de negócio central do resto do sistema, o que facilita testes, manutenção e modificações sem impactar outras partes do projeto.
+| Code Snippet                         | Description                                | Interface Role                         |
+|--------------------------------------|--------------------------------------------|----------------------------------------|
+| `import streamlit as st`             | Imports the GUI library                    | Initializes the web interface layer     |
+| `user_input = data_json['payload']`  | Loads user input from a JSON               | Captures input to be sent to the APIs  |
+| `if st.button("Enviar"):`           | Creates a submit button                    | Triggers processing on click           |
+| `col1, col2 = st.columns([1, 1])`   | Creates two visual columns                 | Splits model responses (Debate, Sequential) |
+| `st.session_state['messages'].append(...)` | Stores session messages              | Controls interaction history           |
+| `st.write(...)`                      | Displays input and output                  | Shows data on screen                   |
+| `if st.button("Clear Chat"):`       | Creates a button to clear session          | Resets interface and conversation log  |
 
 ---
 
-### 🔍 **Como funciona**
+### ✅ Summary
 
-1. **Inicialização de Modelos LLM**:
-   - Usa duas configurações de LLM (temperaturas diferentes): uma mais criativa (`temp=0.6`) e outra mais precisa (default, `temp=0.0`).
-   - As funções `init_llm`, `init_agent` e `init_task` são importadas de `module.py`.
+The Interface layer in Test.AI acts as a **visual control panel** of the application. It is responsible for:
 
-2. **Ciclo de Geração em Rodadas**:
-   - Roda três iterações para gerar e revisar arquivos `.feature`.
-   - Em cada rodada:
-     - Um agente “**gherkin_writer**” escreve o código Gherkin.
-     - Um agente “**gherkin_reviewer**” revisa o código gerado.
-     - Ambos são configurados dinamicamente com base no turno (ex: `rodada_1`, `rodada_2`, etc.).
-
-3. **Definição de Tarefas**:
-   - Tarefas são criadas a partir de descrições dinâmicas (`tasks_dict`), onde o `user_case` é inserido no texto da tarefa para contextualização.
-
-4. **Uso de uma Estrutura de "Crew"**:
-   - Ao que tudo indica (com base no nome das classes `Agent`, `Task`, `Crew`), está utilizando a biblioteca `crewai`, que estrutura o uso de múltiplos agentes colaborativos.
-
-#### 🧠 Inteligência Artificial
-
-A integração com LLM permite que esses agentes gerem conteúdo mais natural, completo e alinhado com os padrões do Gherkin, mesmo com uma entrada simples como um caso de uso (`user_case`).
+- **Receiving user input**
+- **Sending data to external APIs (Debate and Sequential)**
+- **Displaying the results in a clear and organized way**
+- **Maintaining interactive session history**
+- **Resetting the interface on demand**
 
 ---
 
-### ✅ Resumo
+## 🧠 Application Layer in Test.AI
 
-Esse script representa um componente da **Camada de Domínio** que automatiza a **criação colaborativa de testes BDD** com uso de inteligência artificial e múltiplos agentes especializados. É aqui que reside a lógica principal para **converter requisitos textuais em testes executáveis** com validação automatizada.
+### 📌 Description
 
+The **Application layer** can be considered the core of the project. As the name suggests, it is where the logic defined in the Domain layer is executed and materialized into real use cases.
 
-## 🖥️ Infraestrutura no Test.AI
-
-### 📌 Descrição
-
-Este módulo define a infraestrutura backend do Test.AI utilizando o FastAPI como framework principal, com suporte a CORS, tratamento de requisições REST e integração com modelos de linguagem (LLMs) através da biblioteca crewai. O foco principal é o recebimento de eventos via POST, que são processados por agentes inteligentes para gerar arquivos de especificação de testes em formato Gherkin (BDD). Os resultados são orquestrados, revisados e consolidados por múltiplos agentes para produzir um artefato final de teste.
-
-***CORS é um mecanismo usado para adicionar cabeçalhos HTTP que informam aos navegadores para permitir que uma aplicação Web seja executada em uma origem e acesse recursos de outra origem diferente.***
+It defines how the application behaves and orchestrates the agents and their interactions.
 
 ---
 
-### 🔍 Trechos do Código Relacionados à Interface
+### ✅ Summary
 
-**Arquivo:** `src/app/main.py`
+The Application layer in Test.AI is the **engine** of the system. It is responsible for:
 
-```
+- **Executing BDD generation use cases**
+- **Controlling agent interactions and workflows**
+- **Isolating business logic from the interface**
+- **Storing agent definitions**
+- **Managing task configuration files**
+
+---
+
+## 🧠 Domain Layer in Test.AI
+
+### 📌 Description
+
+The **Domain layer** in **Test.AI** contains the **core business logic** of the system. It ensures all data interpretation and test file generation actions are performed correctly and efficiently.
+
+This layer is **independent from frameworks and external technologies**, allowing for easier testing, maintenance, and changes without affecting the rest of the system.
+
+---
+
+### 🔍 How It Works
+
+1. **LLM Initialization**:
+   - Uses two LLM configurations (different temperatures): one more creative (`temp=0.6`) and one more precise (`temp=0.0`).
+   - Functions like `init_llm`, `init_agent`, and `init_task` are imported from `module.py`.
+
+2. **Generation Rounds**:
+   - Runs 3 rounds to generate and review `.feature` files.
+   - Each round:
+     - A **gherkin_writer** agent writes Gherkin code.
+     - A **gherkin_reviewer** agent reviews it.
+     - Agents are dynamically configured with round context (e.g., `round_1`, `round_2`, etc.).
+
+3. **Task Definitions**:
+   - Tasks are dynamically created using `tasks_dict`, inserting the `user_case` into the task descriptions.
+
+4. **Crew Structure**:
+   - Uses the `crewai` library to coordinate multiple agents (`Agent`, `Task`, `Crew` classes).
+
+#### 🧠 Artificial Intelligence
+
+The integration with LLMs enables agents to generate more natural and structured Gherkin code even from simple inputs.
+
+---
+
+### ✅ Summary
+
+This script represents a component of the **Domain Layer** that automates **collaborative BDD test creation** using AI and multiple specialized agents. It is the core logic that converts textual requirements into executable tests.
+
+---
+
+## 🧱 Infrastructure Layer in Test.AI
+
+### 📌 Description
+
+This module defines the backend infrastructure of Test.AI using FastAPI, with support for CORS, REST requests, and LLM integration via CrewAI. Its main focus is receiving POST events that are processed by intelligent agents to generate Gherkin test files.
+
+*CORS is a mechanism to allow web apps from one origin to access resources from another origin via HTTP headers.*
+
+---
+
+### 🔍 Code Snippets Related to Infrastructure
+
+**File:** `src/app/main.py`
+
+```python
 crew = Crew(
-agents=agents + [manager],
-tasks=tasks + [final_task],
-max_rpm=10,
-output_log_file="crew_log.txt",
-manager_llm=llm_low_temp,
-process=Process.sequential,
-verbose=True
+    agents=agents + [manager],
+    tasks=tasks + [final_task],
+    max_rpm=10,
+    output_log_file="crew_log.txt",
+    manager_llm=llm_low_temp,
+    process=Process.sequential,
+    verbose=True
 )
 ```
-- Este trecho define a Crew com múltiplos agentes (writers, reviewers e manager) e suas respectivas tarefas. O processo é executado de forma sequencial, e os logs são salvos em crew_log.txt. A CrewAI orquestra toda a execução das tarefas com uso de LLMs configurados dinamicamente.
+- Defines a Crew with multiple agents and tasks, executing sequentially with logs saved to crew_log.txt
 
 ```
 load_dotenv()
 ```
 
-- Carrega as variáveis de ambiente a partir de um arquivo .env. Isso é essencial para o funcionamento correto da aplicação, especialmente para o uso de chaves de API como a GOOGLE_API_KEY necessária para configurar os LLMs utilizados pelos agentes da CrewAI.
-
+- Loads environment variables from .env, needed for API keys (e.g., GOOGLE_API_KEY).
 ```
 @app.get("/")
 async def home():
 return "Rodando"
 ```
 
-- Este endpoint básico verifica se a aplicação está no ar.
+- Basic endpoint to check if the application is running.
 
 ```
 @app.post("/gherkin")
@@ -197,50 +214,48 @@ return JSONResponse(body)
 ```
 
 
-- O endpoint /gherkin é o principal ponto de entrada para a geração de arquivos de teste. Ele recebe um JSON com um campo evento, que será transformado em uma feature Gherkin através da função generate_gherkin_feature.
+- The main endpoint /gherkin receives an event, processes it via agents, and returns a Gherkin .feature file.
 
-- A função generate_gherkin_feature cria múltiplos agentes (writers e revisores), cada um com funções específicas na construção e verificação de cenários de teste. Um agente gerente sintetiza os melhores resultados em um único arquivo .feature.
+
+
+- he generate_gherkin_feature function creates multiple agents (writers and reviewers), each with specific roles in constructing and verifying test scenarios. A manager agent synthesizes the best results into a single .feature file.
 
 ---
 
-### ✅ Resumo
+### ✅ Summary
 
-- Backend criado com FastAPI, com suporte a CORS.
+- Backend built with FastAPI, with CORS support.
 
-- Utilização da biblioteca CrewAI para orquestrar agentes inteligentes baseados em LLMs (modelo Gemini via GOOGLE_API_KEY).
+- Uses the CrewAI library to orchestrate intelligent agents based on LLMs (Gemini model via `GOOGLE_API_KEY`).
 
-- Entrada via POST em /gherkin recebe eventos e os transforma em cenários BDD (Gherkin).
+- POST input at `/gherkin` receives events and transforms them into BDD scenarios (Gherkin).
 
-- O processo de geração envolve múltiplos agentes:
+- The generation process involves multiple agents:
 
-- Escritores e revisores de cenários Gherkin.
+  - Writers and reviewers for Gherkin scenarios.
 
-- Um gerente que unifica as versões geradas.
+  - A manager that consolidates the generated versions.
 
-- Resultado final é salvo em arquivo .feature e registrado em log (crew_log.txt).
+- Final result is saved in a `.feature` file and logged in `crew_log.txt`.
 
-## 🌐 Tecnologias no Front-end vs Back-end
-|Camada	| Tecnologia	| Descrição |
-|----------|----------|----------|
-|Front-end	| VS Code Extension (TypeScript) |	Responsável pela interação com o usuário e acionamento dos comandos.
-|Back-end	| Python (test-ai-leds)	| Responsável por processar os dados, interpretar arquivos e gerar os códigos.
-|Back-end   | Crew.ai | Plataforma de multi-agentes, os quais fazem a automação dos fluxos de testes.|
-|Back-end   | LLM-model | Utiliza o modelo Gemini 1.5 flash como backend da LLM |
+## 🌐 Technologies in Front-end vs Back-end
 
+| Layer      | Technology                     | Description                                                                 |
+|------------|--------------------------------|-----------------------------------------------------------------------------|
+| Front-end  | VS Code Extension (TypeScript) | Handles user interaction and command execution.                            |
+| Back-end   | Python (`test-ai-leds`)        | Processes data, interprets files, and generates test code.                 |
+| Back-end   | CrewAI                         | Multi-agent framework used to automate test generation workflows.          |
+| Back-end   | LLM model                      | Uses the Gemini 1.5 Flash model as the LLM backend.                        |
 
-## 📚 Referências Bibliográficas
+## 📚 References
 
-1. https://medium.com/@gabrielfernandeslemos/clean-architecture-uma-abordagem-baseada-em-princípios-bf9866da1f9c
-
-2. https://www.alura.com.br/artigos/como-resolver-erro-de-cross-origin-resource-sharing?srsltid=AfmBOorV-xhK1EvpyB2zY9hm9hDnIj3HivlXWoIbFQJZE9jbESQLfXbC
-
-3. https://requests.readthedocs.io/en/latest/
-
-4. https://docs.streamlit.io
-
+1. https://medium.com/@gabrielfernandeslemos/clean-architecture-uma-abordagem-baseada-em-princípios-bf9866da1f9c  
+2. https://www.alura.com.br/artigos/como-resolver-erro-de-cross-origin-resource-sharing?srsltid=AfmBOorV-xhK1EvpyB2zY9hm9hDnIj3HivlXWoIbFQJZE9jbESQLfXbC  
+3. https://requests.readthedocs.io/en/latest/  
+4. https://docs.streamlit.io  
 5. https://github.com/leds-org/leds-tools-public/blob/main/docs/test_ai/img/fluxograma_gherkin.png
 
-## ⚠️ Observação
+## ⚠️ Note
 
-**Pasta ```scripts``` contém código para testar as entidades task e agent que foram refatoradas**
+**The `scripts` folder contains code to test the `task` and `agent` entities, which have been refactored.**
 
