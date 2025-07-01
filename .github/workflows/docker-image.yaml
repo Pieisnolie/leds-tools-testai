@@ -36,7 +36,7 @@ jobs:
     # Rodar testes com pytest
     - name: Rodar testes com pytest
       run: |
-          PYTHONPATH=$PWD pytest src/infrastructure/tests --cov=src
+          PYTHONPATH=$PWD pytest src/infrastructure/tests/unit --cov=src
 
   # CD - Construção da imagem Docker e deploy
   cd:

@@ -22,7 +22,6 @@ import time
 #print(response)
 
 load_dotenv() 
-agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
 
 def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
     
@@ -97,6 +96,7 @@ if __name__ == "__main__":
         #print(tasks_dict.keys())
         #print(tasks_dict["gherkin_code"].keys())
         start_time = time.time()
-        asyncio.run(crew_gherkin(andes, strings))
+        resultado = crew_gherkin(andes, strings)
         end_time = time.time()
+        print(resultado)
         print(f"Tempo de execução: {end_time-start_time}")
