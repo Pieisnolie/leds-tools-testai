@@ -10,6 +10,9 @@ import asyncio
 import time
 
 load_dotenv()
+dtos_path = "C:/Users/vitor/OneDrive/Documentos/PS/leds-tools-testai/dtos"
+end_points_path = "C:/Users/vitor/OneDrive/Documentos/PS/leds-tools-testai/docs/endpoints.txt"
+teste_path = "src/feature/teste.feature"
 
 agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
 
@@ -83,14 +86,14 @@ def info_gatherer_crew(feature: str) -> tuple[str, str]:
     )
 
     dto_file_find = Task(
-        description=f"{feature}\nAt the path C:/Users/vitor/OneDrive/Área de Trabalho/test-ia-dav/leds-tools-testai/dtos\nFind the dto request file and response file for the given feature,\nthe open the file and read it content\n",
+        description=f"{feature}\nAt the path {dtos_path}\nFind the dto request file and response file for the given feature,\nthe open the file and read it content\n",
         expected_output="The dto response and request class code",
         agent=agent_file_searcher,
         async_execution=True
     )
 
     api_url_find = Task(
-        description=f"{feature}\nRead the file at C:/Users/vitor/OneDrive/Área de Trabalho/test-ia-dav/leds-tools-testai/docs/endpoints.txt\nUse the tool to search for the api url for the given Feature;\nThe api_url has the feature title all in lower case;\nYou should look not only for the exact correspondence, but also for similars. For example, if the feature title in lowercase is versaomodalidade, you should also consider versaomodalidadebolsa\n",
+        description=f"{feature}\nRead the file at {end_points_path}\nUse the tool to search for the api url for the given Feature;\nThe api_url has the feature title all in lower case;\nYou should look not only for the exact correspondence, but also for similars. For example, if the feature title in lowercase is versaomodalidade, you should also consider versaomodalidadebolsa\n",
         expected_output="Only the complete url path requested and the respective methods",
         agent=agent_api_finder,
     )
@@ -192,7 +195,7 @@ async def xunit_generation(feature):
     return manager_crew(results)
 
 if __name__ == "__main__":
-    with open("src/features/teste.feature") as file:
+    with open(teste_path) as file:
         feature = file.read()
         start_time = time.time()
         asyncio.run(xunit_generation(feature))

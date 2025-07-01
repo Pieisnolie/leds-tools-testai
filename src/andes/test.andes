@@ -1,0 +1,84 @@
+overview ProjectOverview
+{
+    name: 'Cool Project'
+    description: 'That is a cool project'
+    purpose: 'This project can make the people be cool'
+    miniworld: 'You can write as much as you want'
+}
+
+requirements REQ01
+{
+    name: 'Module requirements'
+    description: 'Module requirements description'
+
+    functional_requirement FR01
+    {
+        description: 'This system should be able to manage clients'
+        priority: 'High'
+    }
+
+    functional_requirement FR02
+    {
+        description: 'This system should be able to manage clients'
+        priority: 'High'
+        depend: REQ01.FR01
+    }
+
+    non_functional_requirement NFR01
+    {
+        description: 'The system must ensure that, in each action confirmation, the potential impacts of the action are presented in a clear and understandable way to the user'
+        priority: 'Medium'
+        depend: REQ01.FR02
+    }
+
+    bussines_rule BR01
+    {
+        description: 'This system should be link with paypal'
+        priority: 'Low'
+        depend: REQ01.NFR01
+    }
+}
+
+actor AC01
+{
+    name: 'Roberto'
+    description: 'Description of the actor role or function'
+}
+
+
+
+usecase UC01
+{
+    name: 'Use Case Name'
+    description: 'Description of the use case'
+    depend: UC01
+    performer: AC01
+    requirements: REQ01.FR01
+    event EV01
+    {
+        name: 'Event Name'
+        description: 'Description of the event 1'
+        depend: UC01.EV01
+        requirements: REQ01.FR01
+        action: 'Action description'
+    }
+
+    event EV02
+    {
+        name: 'Event Name'
+        description: 'Description of the event 2'
+        startDate: '2023-10-01'
+        depend: UC01.EV01
+        requirements: REQ01.FR01
+        action: 'Action description'
+        task TK01 {
+            name : 'Corrigir a lib'
+            description: 'Integrar corretamente a lib para funcionar com o Andes'
+            startDate: '2023-10-01'
+            dueDate: '2023-10-31'
+            status : PENDING
+        }
+    }
+}
+
+

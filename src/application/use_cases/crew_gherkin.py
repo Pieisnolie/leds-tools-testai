@@ -2,14 +2,15 @@
 #import os
 from crewai import Agent, Task, Crew, Process, LLM
 from dotenv import load_dotenv
-from crewai import Crew, Process
 from typing import Dict, List
 from src.infrastructure.loaders.agent_loader import AgentLoader
 from src.infrastructure.loaders.llm_loader import LLM_Loader
 from src.infrastructure.loaders.task_yaml_loader import TaskLoader
-import os
-from dotenv import load_dotenv
+from src.infrastructure.loaders.read_yaml import read_yaml_strings
+import asyncio
+import time
 
+#
 # DEBUG DA API:
 #import litellm
 #litellm._turn_on_debug()  # Ativa debug
@@ -21,43 +22,47 @@ from dotenv import load_dotenv
 #print(response)
 
 load_dotenv() 
+agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
 
 def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
     
-    llm_low_temp = LLM_Loader.load_from_params()
-    llm_high_temp = LLM_Loader.load_from_params(temp=0.6)
+    llm_low_temp: LLM = LLM_Loader.load_from_params()
+    llm_high_temp: LLM = LLM_Loader.load_from_params(temp=0.6)
 
-    agents_dict: Dict[str, str] = strings["agents"]
-    tasks_dict: Dict[str, str] = strings["tasks"]
+    agents_dict: Dict[str, dict] = strings["agents"]
+    tasks_dict: Dict[str, dict] = strings["tasks"]
     
     tasks: List[Task] = []
     agents: List[Agent] = []
 
-    for turn in range(1,4):
-        agents_dict['gherkin_writer']['role'] = agents_dict['gherkin_writer']['role'].format(turn=turn)
-        gherkin_writer_agent: Agent = AgentLoader.load_agents(agents_dict["gherkin_writer"], llm_high_temp)
+    for turn in range(1, 4):
+        writer_dict = agents_dict['gherkin_writer'].copy()
+        writer_dict['role'] = writer_dict['role'].format(turn=turn)
+        gherkin_writer_agent: Agent = AgentLoader.load_agents(writer_dict, llm_high_temp)
 
-        agents_dict['gherkin_reviewer']['role'] = agents_dict['gherkin_reviewer']['role'].format(turn=turn)
-        gherkin_reviewer_agent: Agent = AgentLoader.load_agents(agents_dict["gherkin_reviewer"], llm_low_temp)
+        reviewer_dict = agents_dict['gherkin_reviewer'].copy()
+        reviewer_dict['role'] = reviewer_dict['role'].format(turn=turn)
+        gherkin_reviewer_agent: Agent = AgentLoader.load_agents(reviewer_dict, llm_low_temp)
 
-        tasks_dict["gherkin_code"]["description"] = tasks_dict["gherkin_code"]["description"].format(user_case=user_case)
+        code_task_dict = tasks_dict["gherkin_code"].copy()
+        code_task_dict["description"] = code_task_dict["description"].format(user_case=user_case)
         task_gherkin_code: Task = TaskLoader.load_tasks(
-            tasks_dict["gherkin_code"],
+            code_task_dict,
             gherkin_writer_agent,
             #output_file=f"etapas_geracao/rodada_{turn}.cs"
         )
 
-        tasks_dict["gherkin_review"]["description"] = tasks_dict["gherkin_review"]["description"].format(user_case=user_case)
+        review_task_dict = tasks_dict["gherkin_review"].copy()
+        review_task_dict["description"] = review_task_dict["description"].format(user_case=user_case)
         task_gherkin_review: Task = TaskLoader.load_tasks(
-            tasks_dict["gherkin_review"],
+            review_task_dict,
             gherkin_reviewer_agent,
             context=[task_gherkin_code],
             #output_file=f"etapas_geracao/revisao_{turn}.cs"
         )
-        
+
         agents.append(gherkin_writer_agent)
         agents.append(gherkin_reviewer_agent)
-
         tasks.append(task_gherkin_code)
         tasks.append(task_gherkin_review)
 
@@ -66,7 +71,7 @@ def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
         tasks_dict["manager_gherkin_task"],
         agent=manager,
         context=tasks[1::2],
-        output_file="features/ListarModalidadeFeature.feature",
+        output_file="src/features/ListarModalidadeFeature.feature",
     )
 
     crew: Crew = Crew(
@@ -78,8 +83,20 @@ def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
         manager_llm=llm_low_temp,
         process=Process.sequential,
         verbose=True
-        
     )
     
     resultado = crew.kickoff()
     return resultado.raw
+
+if __name__ == "__main__":
+    with open("src/andes/test.andes") as file:
+        andes = file.read()
+        agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
+        strings = {"agents": agents_dict, "tasks": tasks_dict, "outputs": outputs_dict}
+        #print(agents_dict)
+        #print(tasks_dict.keys())
+        #print(tasks_dict["gherkin_code"].keys())
+        start_time = time.time()
+        asyncio.run(crew_gherkin(andes, strings))
+        end_time = time.time()
+        print(f"Tempo de execução: {end_time-start_time}")

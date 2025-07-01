@@ -1,10 +1,11 @@
-from src.domain.entities.agent import Agent
+from crewai import Agent, LLM  
 
 class AgentLoader():
     @staticmethod
-    def load_agents(agent_dict: dict, llm) -> Agent:
+    def load_agents(agent_dict: dict, llm: LLM) -> Agent:
+        if not isinstance(llm, LLM):
+            raise AttributeError("llm deve ser uma instância de LLM")
         return Agent(
-            name=agent_dict.get("name", "agent"),
             role=agent_dict["role"],
             goal=agent_dict["goal"],
             backstory=agent_dict["backstory"],

@@ -1,4 +1,4 @@
-from infrastructure.loaders.output_example_yaml__loader import load_output_examples
+from infrastructure.loaders.output_example_yaml_loader import load_output_examples
 
 def test_load_output_examples():
     """
