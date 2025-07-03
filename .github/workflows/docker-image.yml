@@ -1,10 +1,10 @@
-name: Test.AI CI/CD
+name: Test.AI CI/CD - Branch Main
 
 on:
   push:
-    branches: [ "main", "davi" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "dev", "davi" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   # CI - Testes e verificação
@@ -33,35 +33,36 @@ jobs:
           pip install test-ai-leds
           pip install pytest-cov
     
-    # Rodar testes com pytest
+     # Rodar testes com pytest
     - name: Rodar testes com pytest
       run: |
-          PYTHONPATH=$PWD pytest src/infrastructure/tests --cov=src
+        PYTHONPATH=$PWD pytest src/tests/unit --cov=src
+      shell: bash
 
   # CD - Construção da imagem Docker e deploy
   cd:
     runs-on: ubuntu-latest
     needs: ci  # Certificar-se de que o job 'ci' seja concluído antes
-    if: github.ref == 'refs/heads/main'  # Deploy só ocorre quando o código está na branch 'main'
-
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v4
-    
-    # Construir a imagem Docker
-    - name: Construir a imagem Docker
-      run: |
-        docker build -t my-python-app:latest .
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      
+      # Construir a imagem Docker
+      - name: Verificar versão do Docker
+        run: docker --version
 
-    # Login no Docker Hub
-    - name: Docker Login
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-    
-    # Push da imagem Docker para o Docker Hub
-    - name: Push da imagem Docker
-      run: |
-        docker tag my-python-app:latest ${{ secrets.DOCKER_USERNAME }}/my-python-app:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/my-python-app:latest
+      - name: Construir a imagem Docker
+        run: docker build -t my-python-app:latest .
+
+      # Login no Docker Hub
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      # Push da imagem Docker para o Docker Hub
+      - name: Push da imagem Docker
+        run: |
+          docker tag my-python-app:latest ${{ secrets.DOCKER_USERNAME }}/my-python-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/my-python-app:latest
