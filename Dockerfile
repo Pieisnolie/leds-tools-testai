@@ -6,8 +6,8 @@ WORKDIR /app
 
 # Copy project files to the container
 COPY requirements.txt requirements.txt
-COPY src/interface/api/api.py api.py
-COPY src/interface/api/api2.py api2.py
+COPY src/Interface/api/api.py api.py
+COPY src/Interface/api/api2.py api2.py
 # COPY api2.py api2.py
 # COPY .env .env
 
