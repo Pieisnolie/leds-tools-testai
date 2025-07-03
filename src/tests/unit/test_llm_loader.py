@@ -6,7 +6,7 @@ from crewai import LLM
 def test_llm_loader_usa_ambiente(monkeypatch):
     monkeypatch.setenv("LLM_MODEL", "mdl-env")
     monkeypatch.setenv("LLM_TEMPERATURE", "0.25")
-    monkeypatch.setenv("GOOGLE_API_KEY", "key-env")
+    monkeypatch.setenv("GEMINI_API_KEY", "key-env")
     inst = LLM_Loader.load_from_params()
     assert isinstance(inst, LLM)
     assert inst.model == "mdl-env"
@@ -23,7 +23,7 @@ def test_llm_loader_default_sem_ambiente(tmp_path, monkeypatch):
     # remove variáveis de ambiente
     monkeypatch.delenv("LLM_MODEL", raising=False)
     monkeypatch.delenv("LLM_TEMPERATURE", raising=False)
-    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     inst = LLM_Loader.load_from_params()
     assert inst.model == "gemini/gemini-1.5-flash"
     assert inst.temperature == 0.0
@@ -45,7 +45,7 @@ def test_llm_loader_model_empty_str(monkeypatch):
     assert inst.model == "gemini/gemini-1.5-flash"
 
 def test_llm_loader_api_key_vazia(monkeypatch):
-    monkeypatch.setenv("GOOGLE_API_KEY", "")
+    monkeypatch.setenv("GEMINI_API_KEY", "")
     inst = LLM_Loader.load_from_params()
     assert inst.api_key == ""
 

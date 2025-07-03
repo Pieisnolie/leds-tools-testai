@@ -8,11 +8,17 @@ from src.infrastructure.loaders.read_yaml import read_yaml_strings
 from dotenv import load_dotenv
 import asyncio
 import time
+import os
 
 load_dotenv()
-dtos_path = "C:/Users/vitor/OneDrive/Documentos/PS/leds-tools-testai/dtos"
-end_points_path = "C:/Users/vitor/OneDrive/Documentos/PS/leds-tools-testai/docs/endpoints.txt"
-teste_path = "src/feature/teste.feature"
+# Definem os diretórios dinâmicos
+REPO_ROOT = os.getcwd()  # Onde o usuário está (raiz do projeto)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
+
+# Caminhos adaptados dinamicamente
+dtos_path = os.path.join(REPO_ROOT, "dtos")
+end_points_path = os.path.join(REPO_ROOT, "docs", "endpoints.txt")
+teste_path = os.path.join(REPO_ROOT, "src", "features", "ListarModalidadeFeature.feature")
 
 agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
 
@@ -37,7 +43,7 @@ def crew_xunit_debate(feature: str, strings: Dict[str, str]) -> str:
     agents.append(csharp_xunit_writer_agent)
     tasks.append(xunit_code_proposal)
 
-    for i in range(1, 4):
+    for i in range(1, 2):
         xunit_solution_discussion_agent: Agent = AgentLoader.load_agents(agents_dict["xunit_solution_discussion"], gemini_llm)
 
         debate_dict = tasks_dict["debate"].copy()

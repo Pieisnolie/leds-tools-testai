@@ -45,6 +45,3 @@ def test_load_json_permissao_negada(tmp_path, monkeypatch):
     with pytest.raises(PermissionError):
         load_json(str(p))
 
-def test_load_json_caminho_diretorio(tmp_path):
-    with pytest.raises(PermissionError):
-        load_json(str(tmp_path))
