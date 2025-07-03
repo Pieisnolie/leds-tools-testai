@@ -16,7 +16,7 @@ class LLM_Loader:
         if not model:
             model = "gemini/gemini-1.5-flash"
         temp = temp if temp is not None else float(os.getenv("LLM_TEMPERATURE", 0.0))
-        api_key = api_key or os.getenv("GOOGLE_API_KEY")
+        api_key = api_key or os.getenv("GEMINI_API_KEY")
 
         try:
             temp = float(temp)
