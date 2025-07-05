@@ -1,5 +1,4 @@
-#import json
-#import os
+
 from crewai import Agent, Task, Crew, Process, LLM
 from dotenv import load_dotenv
 from typing import Dict, List
@@ -7,19 +6,7 @@ from src.infrastructure.loaders.agent_loader import AgentLoader
 from src.infrastructure.loaders.llm_loader import LLM_Loader
 from src.infrastructure.loaders.task_yaml_loader import TaskLoader
 from src.infrastructure.loaders.read_yaml import read_yaml_strings
-import asyncio
 import time
-
-#
-# DEBUG DA API:
-#import litellm
-#litellm._turn_on_debug()  # Ativa debug
-#response = litellm.completion(
-#     model=os.getenv("LLM_MODEL"),  # "gemini/gemini-1.5-flash"
-#     messages=[{"role": "user", "content": "Olá, mundo!"}],
-#     api_key=os.getenv("GEMINI_API_KEY")  # Chave corrigida
-#)
-#print(response)
 
 load_dotenv() 
 
@@ -70,7 +57,7 @@ def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
         tasks_dict["manager_gherkin_task"],
         agent=manager,
         context=tasks[1::2],
-        output_file="src/features/ListarModalidadeFeature.feature",
+        output_file="features/resposta.feature",
     )
 
     crew: Crew = Crew(
@@ -88,7 +75,8 @@ def crew_gherkin(user_case: str, strings: Dict[str, str]) -> str:
     return resultado.raw
 
 if __name__ == "__main__":
-    with open("src/andes/test.andes") as file:
+    file = input("Digite o nome do arquivo ANDES (sem extensão): ")
+    with open(f"andes/{file}.andes") as file:
         andes = file.read()
         agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
         strings = {"agents": agents_dict, "tasks": tasks_dict, "outputs": outputs_dict}

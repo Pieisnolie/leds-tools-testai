@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Caminhos adaptados dinamicamente
 dtos_path = os.path.join(REPO_ROOT, "dtos")
 end_points_path = os.path.join(REPO_ROOT, "docs", "endpoints.txt")
-teste_path = os.path.join(REPO_ROOT, "src", "features", "ListarModalidadeFeature.feature")
+
 
 agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
 
@@ -43,7 +43,7 @@ def crew_xunit_debate(feature: str, strings: Dict[str, str]) -> str:
     agents.append(csharp_xunit_writer_agent)
     tasks.append(xunit_code_proposal)
 
-    for i in range(1, 2):
+    for i in range(1, 4):
         xunit_solution_discussion_agent: Agent = AgentLoader.load_agents(agents_dict["xunit_solution_discussion"], gemini_llm)
 
         debate_dict = tasks_dict["debate"].copy()
@@ -179,7 +179,7 @@ def manager_crew(reviews: tuple[str]) -> None:
     manager_task: Task = TaskLoader.load_tasks(
         manager_xunit_task_dict,
         manager,
-        output_file="VersionarModalidadeStepAI.cs"
+        output_file="resposta/VersionarModalidadeStepAI.cs"
     )
 
     crew = Crew(
@@ -201,7 +201,8 @@ async def xunit_generation(feature):
     return manager_crew(results)
 
 if __name__ == "__main__":
-    with open(teste_path) as file:
+    file = input("Digite o nome do arquivo FEATURE (sem extensão): ")
+    with open(f"features/{file}.feature") as file:
         feature = file.read()
         start_time = time.time()
         asyncio.run(xunit_generation(feature))
