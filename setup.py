@@ -2,7 +2,7 @@ import setuptools
 #apagar o dist toda vez que subir uma nova versão
 setuptools.setup(
     name="leds-tools-testai",
-    version="0.1.0", #Sempre modificar a versão quando houver mudanças significativas
+    version="0.1.1", #Sempre modificar a versão quando houver mudanças significativas
     description="Ferramentas de testes de BDD usando ia",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
