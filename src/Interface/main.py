@@ -34,13 +34,13 @@ class Evento(BaseModel):
 llm_low_temp = LLM(
     model='gemini/gemini-1.5-flash',
     temperature=0.0,
-    api_key=os.getenv("GOOGLE_API_KEY"),
+    api_key=os.getenv("GEMINI_API_KEY"),
 )
 
 llm_high_temp = LLM(
     model='gemini/gemini-1.5-flash',
     temperature=0.8,
-    api_key=os.getenv("GOOGLE_API_KEY"),
+    api_key=os.getenv("GEMINI_API_KEY"),
 )
 
 # Define agents and tasks as in your provided code

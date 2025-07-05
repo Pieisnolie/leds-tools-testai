@@ -1,3 +1,166 @@
+
+# Test.AI - Guia de Uso
+
+## ✅ Como Rodar o Test.AI
+
+### 🔧 Pré-requisitos
+
+Antes de começar, verifique se você tem os seguintes softwares instalados:
+
+- [Python](https://www.python.org/) (incluindo o gerenciador de pacotes `pip`)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Node.js](https://nodejs.org/) (recomendado)
+
+---
+
+### 📦 PASSO 1: Instalar a Biblioteca Python
+
+1. Abra um terminal.
+2. Execute o comando:
+
+```bash
+pip install test-ai-leds
+```
+
+3. Certifique-se de que o diretório `Scripts` do Python está adicionado à variável de ambiente `PATH`.
+
+#### 🔹 Windows
+
+- Execute:
+
+```bash
+pip show test-ai-leds
+```
+
+- Será exibido um caminho semelhante a:
+
+```
+C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages
+```
+
+- Substitua `site-packages` por `Scripts`, por exemplo:
+
+```
+C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts
+```
+
+- Adicione esse caminho nas variáveis de ambiente do sistema.
+
+> 💡 Você também pode usar **virtual environments** para evitar instalação global.
+
+#### 🔹 Linux
+
+- Crie um ambiente virtual:
+
+```bash
+python -m venv <nome-da-venv>
+```
+
+- Ative a venv:
+
+```bash
+source <caminho-da-venv>/bin/activate
+```
+
+- Instale a biblioteca:
+
+```bash
+pip install test-ai-leds
+```
+
+- Adicione o caminho dos scripts ao `.bashrc`:
+
+```bash
+nano ~/.bashrc
+```
+
+Adicione ao final do arquivo:
+
+```bash
+export PATH=$PATH:/<caminho-da-venv>/bin
+```
+
+- Depois, execute:
+
+```bash
+source ~/.bashrc
+```
+
+---
+
+### 🧩 PASSO 2: Instalar a Extensão Test.AI no VS Code
+
+1. Abra o **Visual Studio Code**.
+2. Acesse a aba de extensões (ícone de quadrado ou atalho `Ctrl + Shift + X`).
+3. Busque por `Test.AI`.
+4. Instale a extensão.
+
+---
+
+### ⚙️ PASSO 3: Configurar o Arquivo `.env`
+
+Na pasta raiz do repositório (`leds-tools-testai`), crie um arquivo chamado `.env` com o seguinte conteúdo:
+
+```env
+LLM_MODEL=gemini/gemini-1.5-flash
+GEMINI_API_KEY=<Sua Chave>
+SWAGGER_PATH=<Caminho para o Swagger>
+DTO_SOURCE=<Caminho para a pasta DTO>
+```
+
+#### Exemplo:
+
+```env
+LLM_MODEL=gemini/gemini-1.5-flash
+GEMINI_API_KEY=asduf24385HDSuyad43trfjedsig
+SWAGGER_PATH=C:/Users/usuario/OneDrive/Documentos/PS2/leds-tools-testai/dtos/swagger.json
+DTO_SOURCE=C:/Users/usuario/OneDrive/Documentos/PS2/leds-tools-testai/dtos
+```
+
+---
+
+## ⚡ Funcionalidades
+
+### ✅ Funcionalidade 1: Gerar Arquivos de Código Gherkin (Features, BDD)
+
+#### 📌 Pré-requisitos
+
+- Um arquivo `.andes` dentro da pasta `andes` que está dentro da pasta (`leds-tools-testai`).
+
+#### ▶️ Como executar
+
+No terminal, dentro do repositório (`leds-tools-testai`), rode:
+
+```bash
+python src/application/use_cases/crew_gherkin.py
+```
+
+- Digite o nome do arquivo `.andes` (sem a extensão).
+- O arquivo `.feature` será gerado automaticamente na pasta `features` com o nome `resposta.feature`.
+
+---
+
+### ✅ Funcionalidade 2: Gerar Steps das Features (C# com xUnit)
+
+#### 📌 Pré-requisitos
+
+- Um arquivo `.feature` dentro da pasta `features`que está dentro da pasta (`leds-tools-testai`).
+
+#### ▶️ Como executar
+
+No terminal, dentro do repositório (`leds-tools-testai`), rode:
+
+```bash
+python src/application/use_cases/crew_xUnit.py
+```
+
+- Digite o nome do arquivo `.feature` (sem a extensão).
+- O arquivo `resposta.cs` será gerado na pasta `resposta` que está dentro da pasta (`leds-tools-testai`).
+
+---
+
+
+
 ## 🏛️ Arquitetura Adotada
 Estilo Arquitetural: Clean Architecture
 

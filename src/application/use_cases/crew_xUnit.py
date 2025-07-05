@@ -8,11 +8,17 @@ from src.infrastructure.loaders.read_yaml import read_yaml_strings
 from dotenv import load_dotenv
 import asyncio
 import time
+import os
 
 load_dotenv()
-dtos_path = "C:/Users/vitor/OneDrive/Documentos/PS/leds-tools-testai/dtos"
-end_points_path = "C:/Users/vitor/OneDrive/Documentos/PS/leds-tools-testai/docs/endpoints.txt"
-teste_path = "src/feature/teste.feature"
+# Definem os diretórios dinâmicos
+REPO_ROOT = os.getcwd()  # Onde o usuário está (raiz do projeto)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
+
+# Caminhos adaptados dinamicamente
+dtos_path = os.path.join(REPO_ROOT, "dtos")
+end_points_path = os.path.join(REPO_ROOT, "docs", "endpoints.txt")
+
 
 agents_dict, tasks_dict, outputs_dict = read_yaml_strings()
 
@@ -173,7 +179,7 @@ def manager_crew(reviews: tuple[str]) -> None:
     manager_task: Task = TaskLoader.load_tasks(
         manager_xunit_task_dict,
         manager,
-        output_file="VersionarModalidadeStepAI.cs"
+        output_file="resposta/VersionarModalidadeStepAI.cs"
     )
 
     crew = Crew(
@@ -195,7 +201,8 @@ async def xunit_generation(feature):
     return manager_crew(results)
 
 if __name__ == "__main__":
-    with open(teste_path) as file:
+    file = input("Digite o nome do arquivo FEATURE (sem extensão): ")
+    with open(f"features/{file}.feature") as file:
         feature = file.read()
         start_time = time.time()
         asyncio.run(xunit_generation(feature))
