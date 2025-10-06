@@ -1,3 +1,75 @@
+
+identificador: TC01
+proposito: >
+    Este plano de teste descreve o escopo, os recursos, a abordagem e o cronograma
+    das atividades de teste relacionadas ao arquivo tasks.yaml. O objetivo é garantir
+    que cada tarefa definida no arquivo tenha aderência aos padrões esperados de automação de testes e BDD.
+
+introducao: >
+    O arquivo tasks.yaml define várias tarefas automatizadas de geração e revisão de código,
+    incluindo transformações de casos de uso em Gherkin, criação e revisão de testes xUnit.net,
+    além de tarefas de gerenciamento e debate entre versões de código geradas.
+    Este plano garante que essas tarefas gerem saídas coerentes, corretas e dentro dos padrões técnicos esperados.
+
+itens:
+    gherkin_code
+    gherkin_review
+    manager_gherkin_task
+    xunit_code_proposal
+    xunit_review
+    debate
+    manager_debate_xunit_task
+    manager_xunit_task
+
+funcionalidades:
+descricao: >
+    Conversão de casos de uso em arquivos Gherkin com cenários de sucesso e erro.
+    Revisão e aprimoramento de Gherkin gerado.
+    Consolidação de múltiplas versões de código Gherkin.
+    Geração de código de teste xUnit.net conforme padrões de projeto.
+    Revisão e consolidação de múltiplas versões de testes xUnit.
+    Avaliação e debate entre versões de código com justificativas.
+nao_testadas: >
+    Integrações externas (ex: CI/CD ou pipelines de deploy) não estão cobertas por este plano.
+
+abordagem: >
+    Serão usadas ferramentas como Test.AI e Pytest, além de leitores de .yaml.
+    Cada tarefa será testada quanto à entrada, substituição de placeholders e formatação esperada.
+
+criterios_aceite: >
+    O texto gerado deve respeitar o campo expected_output.
+    Nenhuma tag markdown (``` ou similar) deve estar presente.
+
+suspensao_retornada: >
+    Os testes serão suspensos caso o .yaml esteja corrompido ou mal formatado,
+    ou caso alguma dependência crítica falhe. Ao retomar, será refeita a validação
+    e reexecução dos testes interrompidos.
+
+produtos:
+    Plano de Teste (tasknovo.yaml)
+    Arquivos python de teste (test.py)
+
+tarefas_de_teste:
+    Validar todas as chaves principais (description, expected_output, output_example).
+    Executar o parser .yaml e detectar placeholders não resolvidos.
+    Testar o formato da saída de cada tarefa.
+    Consolidar resultados em relatório final.
+
+ambiente:
+    sistema_operacional: "Linux/Windows compatível com Python 3.10+"
+    ferramentas: ".yaml parser, Pytest, Test.AI" 
+    dependencias: "Nenhuma integração externa — execução local determinística."
+
+treinamento: >
+    Estrutura e sintaxe de arquivos .yaml
+    Padrões IEEE 829-1998
+    Testes BDD (Gherkin) e xUnit.net
+    Boas práticas de automação e revisão de testes
+
+cronograma:  "1. Análise do .yaml 2. Criação dos testes 3. Execução dos testes 4. Revisão e Relatório Final"
+
+riscos: ".yaml mal formatado, Validação automática antes do teste, Reexecução com backup do arquivo"
+
 gherkin_code:
     description: |
         Transform the following use case into BDD files with outline scenarios for success and error cases.
@@ -103,3 +175,9 @@ manager_xunit_task:
         Read and compare all generated C# xUnit codes and develop a final version based on them.
     expected_output: "ONLY the C# xUnit code generated without the code block like ```, DO NOT USE ANY MARKDOWN TAG"
     output_example: xunit_code_output
+
+aprovacoes: "Membros de Gestão de projeto"
+
+responsabilidades:
+    papel: "Designer de tasks"
+    responsabilidade: "Definir casos de teste para cada tarefa .yaml"
